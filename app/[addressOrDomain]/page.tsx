@@ -49,6 +49,7 @@ export default function Page({ params }: AddressOrDomainProps) {
   }, [address]);
 
   useEffect(() => {
+    console.log({ addressOrDomain });
     if (
       typeof addressOrDomain === "string" &&
       addressOrDomain?.toString().toLowerCase().endsWith(".stark")
@@ -60,8 +61,10 @@ export default function Page({ params }: AddressOrDomainProps) {
         starknetIdNavigator
           ?.getStarknetId(addressOrDomain)
           .then((id) => {
+            console.log({ id });
             getIdentityData(id).then((data: Identity) => {
               if (data.error) {
+                console.log("error", data.error);
                 setNotFound(true);
                 return;
               }
@@ -74,7 +77,8 @@ export default function Page({ params }: AddressOrDomainProps) {
               setInitProfile(true);
             });
           })
-          .catch(() => {
+          .catch((error) => {
+            console.log({ error });
             return;
           });
       } else {
@@ -90,7 +94,8 @@ export default function Page({ params }: AddressOrDomainProps) {
             setInitProfile(true);
             if (hexToDecimal(address) === hexToDecimal(addr)) setIsOwner(true);
           })
-          .catch(() => {
+          .catch((error) => {
+            console.log({ error });
             return;
           });
       }
@@ -120,7 +125,8 @@ export default function Page({ params }: AddressOrDomainProps) {
                     setInitProfile(true);
                   });
                 })
-                .catch(() => {
+                .catch((error) => {
+                  console.log({ error });
                   return;
                 });
             } else {
@@ -145,13 +151,14 @@ export default function Page({ params }: AddressOrDomainProps) {
             setInitProfile(true);
           }
         })
-        .catch(() => {
+        .catch((error) => {
           setIdentity({
             starknet_id: "0",
             addr: addressOrDomain,
             domain: minifyAddress(addressOrDomain),
             is_owner_main: false,
           });
+          console.log({ error });
           setInitProfile(true);
           if (hexToDecimal(addressOrDomain) === hexToDecimal(address))
             setIsOwner(true);
@@ -177,6 +184,10 @@ export default function Page({ params }: AddressOrDomainProps) {
     );
     return response.json();
   };
+
+  useEffect(() => {
+    console.log({ identity });
+  }, [identity]);
 
   return (
     <div className={styles.profileBg}>
